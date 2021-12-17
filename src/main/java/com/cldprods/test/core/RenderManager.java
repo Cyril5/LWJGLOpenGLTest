@@ -14,6 +14,7 @@ public class RenderManager {
     private final WindowManager window;
     private ShaderManager shader;
 
+
     public  RenderManager() {
         window = Launcher.getWindow();
     }
@@ -26,14 +27,19 @@ public class RenderManager {
         shader.createUniform("textureSampler");
 
         shader.createUniform("transformationMatrix");
+        shader.createUniform("projectionMatrix");
+        shader.createUniform("viewMatrix");
     }
 
-    public void render(Entity entity) {
+    public void render(Entity entity, Camera camera) {
         clear();
         shader.bind(); // use shader
 
         shader.setUniformInt("textureSampler",0);
         shader.setUniformMatrix("transformationMatrix", Transformation.createTransformationMatrix(entity));
+        shader.setUniformMatrix("projectionMatrix",window.updateProjectionMatrix());
+        shader.setUniformMatrix("viewMatrix",Transformation.getViewMatrix(camera));
+
         GL30.glBindVertexArray(entity.getModel().getId());
 
         GL20.glEnableVertexAttribArray(0);
